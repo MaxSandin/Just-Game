@@ -24,7 +24,12 @@ ModelImporter:
   - first:
       95: 9500000
     second: //RootNode
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Swordsman
+    second: {fileID: 2100000, guid: 1897943bc894b7c4a837f8b3c835223a, type: 2}
   materials:
     materialImportMode: 0
     materialName: 0
