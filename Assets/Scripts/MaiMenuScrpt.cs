@@ -5,19 +5,20 @@ using UnityEngine.SceneManagement;
 
 public class MaiMenuScrpt : MonoBehaviour
 {
-    public void playNewGame()
+//Load next scene in stack
+    public void PlayNewGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
-
-    public void continueGame()
+//Load last scene
+    public void ContinueGame()
     {
         // TooDoo>> Ad continue script after saving method has been added.
         // It is play new game functionality now!!
-        playNewGame();
+        PlayNewGame();
     }
-
-    public void exitGame()
+ //Exit from app
+    public void ExitGame()
     {
         Application.Quit();
     }
