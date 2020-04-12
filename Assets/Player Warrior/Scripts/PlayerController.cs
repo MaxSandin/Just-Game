@@ -11,15 +11,9 @@ public class PlayerController : MonoBehaviour
 	Vector3 inputVec;
 	Vector3 targetDirection;
 
-	readonly int m_HashSpeed = Animator.StringToHash("Speed");
-	readonly int m_HashMoving = Animator.StringToHash("Moving");
-	readonly int m_HashHandAttack = Animator.StringToHash("Attack1Trigger");
-	readonly int m_HashFootAttack = Animator.StringToHash("Attack2Trigger");
-
-	void Awake()
-	{
-		SwipeDetector.OnSwipe += SwipeDetector_DoAction;
-	}
+	//Warrior types
+	public enum Warrior { Karate, Ninja, Brute, Sorceress, Knight, Mage, Archer, TwoHanded, Swordsman, Spearman, Hammer, Crossbow };
+	public Warrior warrior;
 
 	void Update()
 	{
@@ -28,22 +22,39 @@ public class PlayerController : MonoBehaviour
 		float x = joystick.Vertical;
 		inputVec = new Vector3(x, 0, z);
 
-		float speed = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
-		animator.SetFloat(m_HashSpeed, speed);
+		//Apply inputs to animator
+		animator.SetFloat("Input X", z);
+		animator.SetFloat("Input Z", -(x));
 
-		if (Mathf.Abs(x) >= 0.1 || Mathf.Abs(z) >= 0.1)  //if there is some input
+		if (x != 0 || z != 0)  //if there is some input
 		{
 			//set that character is moving
-			animator.SetBool(m_HashMoving, true);
+			animator.SetBool("Moving", true);
 		}
 		else
 		{
 			//character is not moving
-			animator.SetBool(m_HashMoving, false);
+			animator.SetBool("Moving", false);
 		}
+
+		//if (Input.GetButtonDown("Fire1"))
+		//{
+		//	animator.SetTrigger("Attack1Trigger");
+		//	if (warrior == Warrior.Brute)
+		//		StartCoroutine(COStunPause(1.2f));
+		//	else if (warrior == Warrior.Sorceress)
+		//		StartCoroutine(COStunPause(1.2f));
+		//	else
+		//		StartCoroutine(COStunPause(.6f));
+		//}
 
 		//update character position and facing
 		UpdateMovement();
+	}
+
+	public IEnumerator COStunPause(float pauseTime)
+	{
+		yield return new WaitForSeconds(pauseTime);
 	}
 
 	//converts control input vectors into camera facing vectors
@@ -79,36 +90,14 @@ public class PlayerController : MonoBehaviour
 
 	void UpdateMovement()
 	{
+		//get movement input from controls
+		Vector3 motion = inputVec;
+
+		//reduce input for diagonal movement
+		motion *= (Mathf.Abs(inputVec.x) == 1 && Mathf.Abs(inputVec.z) == 1) ? 0.7f : 1;
+
 		RotateTowardMovementDirection();
 		GetCameraRelativeMovement();
-	}
-
-	public IEnumerator COStunPause(float pauseTime)
-	{
-		yield return new WaitForSeconds(pauseTime);
-	}
-
-	private void SwipeDetector_DoAction(SwipeDetector.SwipeDirection direction)
-	{
-		switch (direction)
-		{
-			case SwipeDetector.SwipeDirection.Up:
-				break;
-			case SwipeDetector.SwipeDirection.Down:
-				break;
-			case SwipeDetector.SwipeDirection.Left:
-				{
-					animator.SetTrigger(m_HashFootAttack);
-					StartCoroutine(COStunPause(.6f));
-				}
-				break;
-			case SwipeDetector.SwipeDirection.Right:
-				{
-					animator.SetTrigger(m_HashHandAttack);
-					StartCoroutine(COStunPause(.6f));
-				}
-				break;
-		}
 	}
 
 	//Placeholder functions for Animation events
@@ -126,5 +115,19 @@ public class PlayerController : MonoBehaviour
 
 	void OnGUI()
 	{
+		//if (GUI.Button(new Rect(25, 85, 100, 30), "Attack1"))
+		//{
+		//	animator.SetTrigger("Attack1Trigger");
+
+		//	//if character is Brute or Sorceress
+		//	if (warrior == Warrior.Brute || warrior == Warrior.Sorceress)
+		//	{
+		//		StartCoroutine(COStunPause(1.2f));
+		//	}
+		//	else
+		//	{
+		//		StartCoroutine(COStunPause(.6f));
+		//	}
+		//}
 	}
 }
