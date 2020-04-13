@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MaiMenuScrpt : MonoBehaviour
+public class MaiMenuScript : MonoBehaviour
 {
 //Load next scene in stack
     public void PlayNewGame()
