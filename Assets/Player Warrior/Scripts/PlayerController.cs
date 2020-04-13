@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
 	public float attackDuration = 2f;
 
 	// Перекаты
-	public enum RoolDirection { Forward, Backward}
+	public enum RollDirection { Forward, Backward}
 	public float rollDuration = 0.35f;
 	private bool isRolling = false;
 	void Awake()
@@ -104,13 +104,13 @@ public class PlayerController : MonoBehaviour
 			case SwipeDetector.SwipeDirection.Up:
 				{
 					if (!isRolling)
-						StartCoroutine(Roll(RoolDirection.Forward));
+						StartCoroutine(Roll(RollDirection.Forward));
 				}
 				break;
 			case SwipeDetector.SwipeDirection.Down:
 				{
 					if (!isRolling)
-						StartCoroutine(Roll(RoolDirection.Backward));
+						StartCoroutine(Roll(RollDirection.Backward));
 				}
 				break;
 			case SwipeDetector.SwipeDirection.Left:
@@ -133,18 +133,18 @@ public class PlayerController : MonoBehaviour
 		if(!isRolling)
 		{
 			transform.rotation = rotation;
-			StartCoroutine(Roll(RoolDirection.Forward));
+			StartCoroutine(Roll(RollDirection.Forward));
 		}
 	}
 
-	public IEnumerator Roll(RoolDirection direction)
+	public IEnumerator Roll(RollDirection direction)
 	{
 		switch(direction)
 		{
-			case RoolDirection.Forward:
+			case RollDirection.Forward:
 				animator.SetTrigger(m_HashRoolForward);
 				break;
-			case RoolDirection.Backward:
+			case RollDirection.Backward:
 				animator.SetTrigger(m_HashRoolBackward);
 				break;
 		}
