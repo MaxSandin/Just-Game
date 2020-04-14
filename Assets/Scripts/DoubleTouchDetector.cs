@@ -77,11 +77,11 @@ public class DoubleTouchDetector : MonoBehaviour
 						if (lastTouchEndedTime > 0f)
 						{
 							if (Time.time - lastTouchEndedTime < maxTimeBetweenTouches)
-								OnDoubleTouch(CalcPlayerRotation(Input.mousePosition));
+								OnDoubleTouch(CalcPlayerRotation(touch.position));
 						}
 					}
 
-					lastTouchPosition = Input.mousePosition;
+					lastTouchPosition = touch.position;
 					lastTouchPressedTime = Time.time;
 					break;
 				case TouchPhase.Ended:
@@ -92,7 +92,7 @@ public class DoubleTouchDetector : MonoBehaviour
 						else
 							lastTouchEndedTime = -1;
 
-						lastTouchPosition = Input.mousePosition;
+						lastTouchPosition = touch.position;
 					}
 					break;
 			}
@@ -102,7 +102,7 @@ public class DoubleTouchDetector : MonoBehaviour
 
 	Quaternion CalcPlayerRotation(Vector3 position)
     {
-		Plane playerPlane = new Plane(Vector3.up, player.transform.position);
+		Plane playerPlane = new Plane(Vector3.up, player.position);
 
 		Ray ray = Camera.main.ScreenPointToRay(position);
 
@@ -111,7 +111,7 @@ public class DoubleTouchDetector : MonoBehaviour
 		if (playerPlane.Raycast(ray, out hitdist))
 		{
 			Vector3 targetPoint = ray.GetPoint(hitdist);
-			playerRotation = Quaternion.LookRotation(targetPoint - player.transform.position);
+			playerRotation = Quaternion.LookRotation(targetPoint - player.position);
 		}
 
 		return playerRotation;
