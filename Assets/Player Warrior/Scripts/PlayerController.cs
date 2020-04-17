@@ -15,10 +15,19 @@ public class PlayerController : MonoBehaviour
 	readonly int m_HashMoving = Animator.StringToHash("Moving");
 	readonly int m_HashHandAttack = Animator.StringToHash("Attack1Trigger");
 	readonly int m_HashFootAttack = Animator.StringToHash("Attack2Trigger");
+	readonly int m_HashRoolForward = Animator.StringToHash("RollForwardTrigger");
+	readonly int m_HashRoolBackward = Animator.StringToHash("RollBackwardTrigger");
 
+	public float attackDuration = 2f;
+
+	// Перекаты
+	public enum RollDirection { Forward, Backward}
+	public float rollDuration = 0.35f;
+	private bool isRolling = false;
 	void Awake()
 	{
 		SwipeDetector.OnSwipe += SwipeDetector_DoAction;
+		DoubleTouchDetector.OnDoubleTouch += DoubleTouchDetector_DoAction;
 	}
 
 	void Update()
@@ -93,22 +102,56 @@ public class PlayerController : MonoBehaviour
 		switch (direction)
 		{
 			case SwipeDetector.SwipeDirection.Up:
+				{
+					if (!isRolling)
+						StartCoroutine(Roll(RollDirection.Forward));
+				}
 				break;
 			case SwipeDetector.SwipeDirection.Down:
+				{
+					if (!isRolling)
+						StartCoroutine(Roll(RollDirection.Backward));
+				}
 				break;
 			case SwipeDetector.SwipeDirection.Left:
 				{
 					animator.SetTrigger(m_HashFootAttack);
-					StartCoroutine(COStunPause(.6f));
+					StartCoroutine(COStunPause(attackDuration));
 				}
 				break;
 			case SwipeDetector.SwipeDirection.Right:
 				{
 					animator.SetTrigger(m_HashHandAttack);
-					StartCoroutine(COStunPause(.6f));
+					StartCoroutine(COStunPause(attackDuration));
 				}
 				break;
 		}
+	}
+
+	private void DoubleTouchDetector_DoAction(Quaternion rotation)
+	{
+		if(!isRolling)
+		{
+			transform.rotation = rotation;
+			StartCoroutine(Roll(RollDirection.Forward));
+		}
+	}
+
+	public IEnumerator Roll(RollDirection direction)
+	{
+		switch(direction)
+		{
+			case RollDirection.Forward:
+				animator.SetTrigger(m_HashRoolForward);
+				break;
+			case RollDirection.Backward:
+				animator.SetTrigger(m_HashRoolBackward);
+				break;
+		}
+
+		isRolling = true;
+		yield return new WaitForSeconds(rollDuration);
+		isRolling = false;
 	}
 
 	//Placeholder functions for Animation events
