@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
 	public Animator animator;
 	public Joystick joystick;
 
+	public MeleeWeapon meleeWeapon;
+
 	float rotationSpeed = 30;
 	Vector3 inputVec;
 	Vector3 targetDirection;
@@ -24,13 +26,21 @@ public class PlayerController : MonoBehaviour
 	public enum RollDirection { Forward, Backward}
 	public float rollDuration = 0.35f;
 	private bool isRolling = false;
-	void Awake()
+	
+	// Called automatically by Unity when the script is first added to a gameobject.
+	void Reset()
 	{
-		SwipeDetector.OnSwipe += SwipeDetector_DoAction;
-		DoubleTouchDetector.OnDoubleTouch += DoubleTouchDetector_DoAction;
+		meleeWeapon = GetComponentInChildren<MeleeWeapon>();
 	}
 
-	void Update()
+    void Awake()
+    {
+        SwipeDetector.OnSwipe += SwipeDetector_DoAction;
+        DoubleTouchDetector.OnDoubleTouch += DoubleTouchDetector_DoAction;
+        meleeWeapon.SetOwner(gameObject);
+    }
+
+    void Update()
 	{
 		//Get input from controls
 		float z = joystick.Horizontal;
@@ -92,10 +102,12 @@ public class PlayerController : MonoBehaviour
 		GetCameraRelativeMovement();
 	}
 
-	public IEnumerator COStunPause(float pauseTime)
-	{
-		yield return new WaitForSeconds(pauseTime);
-	}
+    public IEnumerator COStunPause(float pauseTime)
+    {
+        meleeWeapon.BeginAttack();
+        yield return new WaitForSeconds(pauseTime);
+        meleeWeapon.EndAttack();
+    }
 
 	private void SwipeDetector_DoAction(SwipeDetector.SwipeDirection direction)
 	{
