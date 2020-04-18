@@ -7,12 +7,6 @@ public class PlayerController : MonoBehaviour
 	public Animator animator;
 	public Joystick joystick;
 
-	public MeleeWeapon meleeWeapon;
-
-	float rotationSpeed = 30;
-	Vector3 inputVec;
-	Vector3 targetDirection;
-
 	readonly int m_HashSpeed = Animator.StringToHash("Speed");
 	readonly int m_HashMoving = Animator.StringToHash("Moving");
 	readonly int m_HashHandAttack = Animator.StringToHash("Attack1Trigger");
@@ -20,25 +14,27 @@ public class PlayerController : MonoBehaviour
 	readonly int m_HashRoolForward = Animator.StringToHash("RollForwardTrigger");
 	readonly int m_HashRoolBackward = Animator.StringToHash("RollBackwardTrigger");
 
+	float rotationSpeed = 30;
+	Vector3 inputVec;
+	Vector3 targetDirection;
+
 	public float attackDuration = 2f;
+
+	private MeleeWeapon body;
+	private MeleeWeapon weapon;
 
 	// Перекаты
 	public enum RollDirection { Forward, Backward}
 	public float rollDuration = 0.35f;
 	private bool isRolling = false;
-	
-	// Called automatically by Unity when the script is first added to a gameobject.
-	void Reset()
+	void Awake()
 	{
-		meleeWeapon = GetComponentInChildren<MeleeWeapon>();
-	}
+		body = GetComponentInChildren<MeleeWeapon>();
+		weapon = null;
 
-    void Awake()
-    {
-        SwipeDetector.OnSwipe += SwipeDetector_DoAction;
-        DoubleTouchDetector.OnDoubleTouch += DoubleTouchDetector_DoAction;
-        meleeWeapon.SetOwner(gameObject);
-    }
+		SwipeDetector.OnSwipe += SwipeDetector_DoAction;
+		DoubleTouchDetector.OnDoubleTouch += DoubleTouchDetector_DoAction;
+	}
 
     void Update()
 	{
@@ -102,16 +98,16 @@ public class PlayerController : MonoBehaviour
 		GetCameraRelativeMovement();
 	}
 
-    public IEnumerator COStunPause(float pauseTime)
-    {
-        meleeWeapon.BeginAttack();
-        yield return new WaitForSeconds(pauseTime);
-        meleeWeapon.EndAttack();
-    }
-
-	private void SwipeDetector_DoAction(SwipeDetector.SwipeDirection direction)
+	public IEnumerator COStunPause(float pauseTime)
 	{
-		switch (direction)
+		yield return new WaitForSeconds(pauseTime);
+	}
+
+	private void SwipeDetector_DoAction(SwipeDetector.SwipeData swipeData)
+	{
+		transform.rotation = swipeData.rotation;
+
+		switch (swipeData.direction)
 		{
 			case SwipeDetector.SwipeDirection.Up:
 				{
@@ -165,21 +161,27 @@ public class PlayerController : MonoBehaviour
 		yield return new WaitForSeconds(rollDuration);
 		isRolling = false;
 	}
-
-	//Placeholder functions for Animation events
-	void Hit()
+	public void MeleeAttackStart(int throwing = 0)
 	{
+		if(weapon != null)
+			weapon.BeginAttack(throwing != 0);
+		else
+			body.BeginAttack(throwing != 0);
+		//m_InAttack = true;
 	}
 
-	void FootR()
+	// This is called by an animation event when Ellen finishes swinging her staff.
+	public void MeleeAttackEnd()
 	{
+		if (weapon != null)
+			weapon.EndAttack();
+		else
+			body.EndAttack();
+		//m_InAttack = false;
 	}
 
-	void FootL()
+	public void SetWeapon(MeleeWeapon weapon)
 	{
-	}
-
-	void OnGUI()
-	{
+		this.weapon = weapon;
 	}
 }

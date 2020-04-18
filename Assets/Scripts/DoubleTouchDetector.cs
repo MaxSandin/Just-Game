@@ -30,7 +30,7 @@ public class DoubleTouchDetector : MonoBehaviour
 	private void Update()
 	{
 		#region Comp 
-		if (Input.GetMouseButtonDown(0))
+		if (Input.GetMouseButtonDown(2))
 		{
 			if (!CheckTouchPosition(Input.mousePosition))
 				return;
@@ -47,7 +47,7 @@ public class DoubleTouchDetector : MonoBehaviour
 			lastTouchPosition = Input.mousePosition;
 			lastTouchPressedTime = Time.time;
 		}
-		else if (Input.GetMouseButtonUp(0))
+		else if (Input.GetMouseButtonUp(2))
 		{
 			if (CheckTouchDistance(Input.mousePosition))
 			{
