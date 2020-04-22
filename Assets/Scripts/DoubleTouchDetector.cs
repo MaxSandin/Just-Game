@@ -30,35 +30,35 @@ public class DoubleTouchDetector : MonoBehaviour
 	private void Update()
 	{
 		#region Comp 
-		if (Input.GetMouseButtonDown(2))
-		{
-			if (!CheckTouchPosition(Input.mousePosition))
-				return;
+		//if (Input.GetMouseButtonDown(2))
+		//{
+		//	if (!CheckTouchPosition(Input.mousePosition))
+		//		return;
 
-			if (CheckTouchDistance(Input.mousePosition))
-			{
-				if (lastTouchEndedTime > 0f)
-				{
-					if (Time.time - lastTouchEndedTime < maxTimeBetweenTouches)
-						OnDoubleTouch(CalcPlayerRotation(Input.mousePosition));
-				}
-			}
+		//	if (CheckTouchDistance(Input.mousePosition))
+		//	{
+		//		if (lastTouchEndedTime > 0f)
+		//		{
+		//			if (Time.time - lastTouchEndedTime < maxTimeBetweenTouches)
+		//				OnDoubleTouch(CalcPlayerRotation(Input.mousePosition));
+		//		}
+		//	}
 
-			lastTouchPosition = Input.mousePosition;
-			lastTouchPressedTime = Time.time;
-		}
-		else if (Input.GetMouseButtonUp(2))
-		{
-			if (CheckTouchDistance(Input.mousePosition))
-			{
-				if (Time.time - lastTouchPressedTime < maxTouchPressedTime)
-					lastTouchEndedTime = Time.time;
-				else
-					lastTouchEndedTime = -1;
+		//	lastTouchPosition = Input.mousePosition;
+		//	lastTouchPressedTime = Time.time;
+		//}
+		//else if (Input.GetMouseButtonUp(2))
+		//{
+		//	if (CheckTouchDistance(Input.mousePosition))
+		//	{
+		//		if (Time.time - lastTouchPressedTime < maxTouchPressedTime)
+		//			lastTouchEndedTime = Time.time;
+		//		else
+		//			lastTouchEndedTime = -1;
 
-				lastTouchPosition = Input.mousePosition;
-			}
-		}
+		//		lastTouchPosition = Input.mousePosition;
+		//	}
+		//}
 		#endregion
 
 		#region Mobile

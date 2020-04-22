@@ -43,6 +43,9 @@ public class MeleeWeapon : MonoBehaviour
         {
             foreach (AttackPoint pts in attackPoints)
             {
+                if (pts.attackRoot == null)
+                    continue;
+
                 Vector3 ptsPosition = pts.attackRoot.position + pts.attackRoot.TransformVector(pts.offset);
                 Collider[] hitTargets = Physics.OverlapSphere(ptsPosition, pts.radius, targetLayers);
 
@@ -80,6 +83,9 @@ public class MeleeWeapon : MonoBehaviour
     {
         foreach (AttackPoint pts in attackPoints)
         {
+            if (pts.attackRoot == null)
+                continue;
+
             Vector3 worldPos = pts.attackRoot.TransformVector(pts.offset);
             Gizmos.color = new Color(1.0f, 0.0f, 0.0f, 0.4f);
             Gizmos.DrawSphere(pts.attackRoot.position + worldPos, pts.radius);

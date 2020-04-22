@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Joystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+public class Joystick : MonoBehaviour
 {
     public float Horizontal { get { return (snapX) ? SnapFloat(input.x, AxisOptions.Horizontal) : input.x; } }
     public float Vertical { get { return (snapY) ? SnapFloat(input.y, AxisOptions.Vertical) : input.y; } }
@@ -26,6 +26,8 @@ public class Joystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
     public bool SnapY { get { return snapY; } set { snapY = value; } }
     public bool AlwaysHide { get { return alwaysHide; } set { alwaysHide = value; } }
 
+    public bool IsActive { get { return isActive; } }
+
     [SerializeField] private float handleRange = 1;
     [SerializeField] private float deadZone = 0;
     [SerializeField] private AxisOptions axisOptions = AxisOptions.Both;
@@ -42,14 +44,13 @@ public class Joystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
 
     private Vector2 input = Vector2.zero;
 
+    private bool isActive = false;
+
     protected virtual void Start()
     {
         HandleRange = handleRange;
         DeadZone = deadZone;
-        baseRect = GetComponent<RectTransform>();
-        canvas = GetComponentInParent<Canvas>();
-        if (canvas == null)
-            Debug.LogError("The Joystick is not placed inside a canvas");
+        baseRect = GetComponentInParent<RectTransform>();
 
         Vector2 center = new Vector2(0.5f, 0.5f);
         background.pivot = center;
@@ -61,24 +62,32 @@ public class Joystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
         background.gameObject.SetActive(false);
     }
 
-    public virtual void OnPointerDown(PointerEventData eventData)
+    public void Activate(bool active, Vector2 touchPosition = new Vector2())
     {
-        background.anchoredPosition = ScreenPointToAnchoredPosition(eventData.position);
-        if(!alwaysHide)
-            background.gameObject.SetActive(true);
+        isActive = active;
 
-        OnDrag(eventData);
+        if(isActive)
+        {
+            background.anchoredPosition = ScreenPointToAnchoredPosition(touchPosition);
+            if (!alwaysHide)
+                background.gameObject.SetActive(true);
+            Drag(touchPosition);
+        }
+        else
+        {
+            if (!alwaysHide)
+                background.gameObject.SetActive(false);
+
+            input = Vector2.zero;
+            handle.anchoredPosition = Vector2.zero;
+        }
     }
 
-    public void OnDrag(PointerEventData eventData)
+    public void Drag(Vector2 touchPosition)
     {
-        cam = null;
-        if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
-            cam = canvas.worldCamera;
-
-        Vector2 position = RectTransformUtility.WorldToScreenPoint(cam, background.position);
+        Vector2 position = RectTransformUtility.WorldToScreenPoint(null, background.position);
         Vector2 radius = background.sizeDelta / 2;
-        input = (eventData.position - position) / (radius * canvas.scaleFactor);
+        input = (touchPosition - position) / radius;
         FormatInput();
         HandleInput(input.magnitude, input.normalized, radius, cam);
         handle.anchoredPosition = input * radius * handleRange;
@@ -135,15 +144,6 @@ public class Joystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
                 return -1;
         }
         return 0;
-    }
-
-    public virtual void OnPointerUp(PointerEventData eventData)
-    {
-        if(!alwaysHide)
-            background.gameObject.SetActive(false);
-
-        input = Vector2.zero;
-        handle.anchoredPosition = Vector2.zero;
     }
 
     protected Vector2 ScreenPointToAnchoredPosition(Vector2 screenPosition)
