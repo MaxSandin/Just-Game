@@ -112,14 +112,14 @@ public class PlayerController : MonoBehaviour
 		{
 			case SwipeDetector.SwipeDirection.Up:
 				{
-					if (!isRolling)
-						StartCoroutine(Roll(RollDirection.Forward));
+					//if (!isRolling)
+					//	StartCoroutine(Roll(RollDirection.Forward));
 				}
 				break;
 			case SwipeDetector.SwipeDirection.Down:
 				{
-					if (!isRolling)
-						StartCoroutine(Roll(RollDirection.Backward));
+					//if (!isRolling)
+					//	StartCoroutine(Roll(RollDirection.Backward));
 				}
 				break;
 			case SwipeDetector.SwipeDirection.Left:

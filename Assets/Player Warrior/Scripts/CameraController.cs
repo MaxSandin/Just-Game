@@ -3,7 +3,7 @@
 public class CameraController : MonoBehaviour
 {
 	#region Consts
-	private const float SMOOTH_TIME = 0.3f;
+	private const float SMOOTH_TIME = 0.0f;
 	#endregion
 	
 	#region Public Properties

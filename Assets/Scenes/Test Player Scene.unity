@@ -178,7 +178,7 @@ PrefabInstance:
       objectReference: {fileID: 167327933}
     - target: {fileID: 11481238, guid: 16dc4b51d7b30f74a9fd33417596daa7, type: 3}
       propertyPath: offSetZ
-      value: -8
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 11481238, guid: 16dc4b51d7b30f74a9fd33417596daa7, type: 3}
       propertyPath: LockY
