@@ -30,7 +30,7 @@ public class SwipeDetector
         {
             SwipeData data = new SwipeData();
             Vector2 position = startTouchPosition + (endTouchPosition - startTouchPosition) / 2; // TODO: придумать хорошее распознавание направления
-            data.rotation = CalcPlayerRotation(position);
+            //data.rotation = CalcPlayerRotation(position);
 
             if (IsVerticalSwipe(startTouchPosition, endTouchPosition))
             {

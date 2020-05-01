@@ -106,7 +106,7 @@ public class PlayerController : MonoBehaviour
 
 	private void SwipeDetector_DoAction(SwipeDetector.SwipeData swipeData)
 	{
-		transform.rotation = swipeData.rotation;
+		//transform.rotation = swipeData.rotation;
 
 		switch (swipeData.direction)
 		{
