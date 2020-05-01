@@ -17,7 +17,9 @@ public class ActionAreaController : MonoBehaviour, IPointerDownHandler, IDragHan
     public float maxTouchesDistance = 50;
 
     public Joystick joystick;
-    public float joystickTouchDelay = 1;
+    public float joystickTouchDelay = 0.01f;
+
+    public SwipeHolder swipeHolder;
 
     private Vector2 startTouchPosition = -Vector2.one;
     private Vector2 endTouchPosition = -Vector2.one;
@@ -35,6 +37,7 @@ public class ActionAreaController : MonoBehaviour, IPointerDownHandler, IDragHan
     void Start()
     {
         swipeDetector = new SwipeDetector(player);
+        swipeHolder.SetPlayer(player);
     }
 
     // Update is called once per frame
@@ -42,12 +45,18 @@ public class ActionAreaController : MonoBehaviour, IPointerDownHandler, IDragHan
     {
         if (joystick != null)
         {
-            if (isPressed && endTouchPosition == startTouchPosition 
-                && lastTimeTouch > 0 && Time.time - lastTimeTouch >= joystickTouchDelay)
+            if (isPressed && endTouchPosition == startTouchPosition
+                && lastTimeTouch > 0 && Time.time - lastTimeTouch >= joystickTouchDelay
+                && !swipeHolder.ChekEnemy())
             {
                 joystick.Activate(true, startTouchPosition);
                 return;
             }
+        }
+
+        if (isPressed)
+        {
+            swipeHolder.UpdateSwipe(endTouchPosition);
         }
     }
 
@@ -56,6 +65,8 @@ public class ActionAreaController : MonoBehaviour, IPointerDownHandler, IDragHan
         endTouchPosition = startTouchPosition = eventData.position;
         lastTimeTouch = Time.time;
         isPressed = true;
+
+        swipeHolder.StartSwipe(startTouchPosition);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -83,9 +94,11 @@ public class ActionAreaController : MonoBehaviour, IPointerDownHandler, IDragHan
             return;
         }
 
+        swipeHolder.StopSwipe();
+
         // свайпы
-        if (swipeDetector.DetectSwipe(startTouchPosition, endTouchPosition, minimumSwipeDistance))
-            return;
+        if (swipeHolder.ChekEnemy())
+            swipeDetector.DetectSwipe(startTouchPosition, endTouchPosition, minimumSwipeDistance);
     }
 
     Quaternion CalcPlayerRotation(Vector3 position)
