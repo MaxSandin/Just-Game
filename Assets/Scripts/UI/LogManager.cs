@@ -7,18 +7,32 @@ public class LogManager : MonoBehaviour
 {
     [SerializeField] private Text text;
     [SerializeField] private int logLimit = 5;
+    [SerializeField] private Toggle logToggle;
 
     private string myLog;
+    private GameObject logPanel;
     private Queue myLogQueue = new Queue();
 
-    void OnEnable()
+    void Start()
     {
-        Application.logMessageReceived += HandleLog;
+        logPanel = GameObject.Find("LogPanel");
+        EnableLog();
     }
 
-    void OnDisable()
+    public void EnableLog()
     {
-        Application.logMessageReceived -= HandleLog;
+        if (logToggle.isOn)
+        {
+            Application.logMessageReceived += HandleLog;
+            logPanel.SetActive(true);
+        }
+        else
+        {
+            Application.logMessageReceived -= HandleLog;
+            logPanel.SetActive(false);
+            myLogQueue.Clear();
+            myLog = "";
+        }
     }
 
     void HandleLog(string logString, string stackTrace, LogType type)
