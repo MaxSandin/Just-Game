@@ -19,6 +19,7 @@ public class CreateWeapon : MonoBehaviour
 
             weapon.GetComponent<FixedUpdateFollow>().toFollow = hand.transform;
             MeleeWeapon weaponScript = weapon.GetComponent<MeleeWeapon>();
+            weaponScript.SetOwner(other.gameObject);
 
             other.gameObject.GetComponent<PlayerController>().SetWeapon(weaponScript);
 

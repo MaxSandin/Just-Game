@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour
 	Vector3 inputVec;
 	Vector3 targetDirection;
 
-	public float attackDuration = 2f;
 
 	private MeleeWeapon body;
 	private MeleeWeapon weapon;
@@ -30,6 +29,8 @@ public class PlayerController : MonoBehaviour
 	void Awake()
 	{
 		body = GetComponentInChildren<MeleeWeapon>();
+		body.SetOwner(gameObject);
+
 		weapon = null;
 
 		SwipeDetector.OnSwipe += SwipeDetector_DoAction;
@@ -103,11 +104,9 @@ public class PlayerController : MonoBehaviour
 		yield return new WaitForSeconds(pauseTime);
 	}
 
-	private void SwipeDetector_DoAction(SwipeDetector.SwipeData swipeData)
+	private void SwipeDetector_DoAction(SwipeDetector.SwipeDirection swipeDirection)
 	{
-		transform.rotation = swipeData.rotation;
-
-		switch (swipeData.direction)
+		switch (swipeDirection)
 		{
 			case SwipeDetector.SwipeDirection.Up:
 				{
@@ -124,23 +123,22 @@ public class PlayerController : MonoBehaviour
 			case SwipeDetector.SwipeDirection.Left:
 				{
 					animator.SetTrigger(m_HashFootAttack);
-					StartCoroutine(COStunPause(attackDuration));
+					//StartCoroutine(COStunPause(attackDuration));
 				}
 				break;
 			case SwipeDetector.SwipeDirection.Right:
 				{
 					animator.SetTrigger(m_HashHandAttack);
-					StartCoroutine(COStunPause(attackDuration));
+					//StartCoroutine(COStunPause(attackDuration));
 				}
 				break;
 		}
 	}
 
-	private void DoubleTouchDetector_DoAction(Quaternion rotation)
+	private void DoubleTouchDetector_DoAction()
 	{
 		if(!isRolling)
 		{
-			transform.rotation = rotation;
 			StartCoroutine(Roll(RollDirection.Forward));
 		}
 	}
@@ -161,23 +159,21 @@ public class PlayerController : MonoBehaviour
 		yield return new WaitForSeconds(rollDuration);
 		isRolling = false;
 	}
-	public void MeleeAttackStart(int throwing = 0)
+
+	public void MeleeAttackStart()
 	{
 		if(weapon != null)
-			weapon.BeginAttack(throwing != 0);
+			weapon.BeginAttack();
 		else
-			body.BeginAttack(throwing != 0);
-		//m_InAttack = true;
+			body.BeginAttack();
 	}
 
-	// This is called by an animation event when Ellen finishes swinging her staff.
 	public void MeleeAttackEnd()
 	{
 		if (weapon != null)
 			weapon.EndAttack();
 		else
 			body.EndAttack();
-		//m_InAttack = false;
 	}
 
 	public void SetWeapon(MeleeWeapon weapon)
