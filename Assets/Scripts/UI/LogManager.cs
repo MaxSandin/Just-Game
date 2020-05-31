@@ -32,6 +32,7 @@ public class LogManager : MonoBehaviour
             logPanel.SetActive(false);
             myLogQueue.Clear();
             myLog = "";
+            text.text = "";
         }
     }
 
