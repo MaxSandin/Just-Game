@@ -4,100 +4,54 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DoubleTouchDetector : MonoBehaviour
+public class DoubleTouchDetector
 {
-    public Transform player;
-	public float maxTouchPressedTime = 0.5f;
-	public float maxTimeBetweenTouches = 0.4f;
-	public float maxTouchesDistance = 50;
-	
-	private RectTransform background;
+	private Transform player;
 	private float lastTouchPressedTime;
 	private float lastTouchEndedTime;
 	private Vector2 lastTouchPosition;
 
-	public static event Action<Quaternion> OnDoubleTouch = delegate { };
+	public static event Action OnDoubleTouch = delegate { };
 
-	void Start()
+	public DoubleTouchDetector(Transform p)
     {
-		background = GetComponent<RectTransform>();
-
+		player = p;
 		lastTouchEndedTime = -1f;
 		lastTouchPressedTime = -1f;
 		lastTouchPosition = Vector2.zero;
 	}
 
-	private void Update()
+	public bool DetectTouch(Vector2 touchPosition, float maxTouchPressedTime, float maxTimeBetweenTouches, float maxTouchesDistance)
 	{
-		#region Comp 
-		if (Input.GetMouseButtonDown(0))
+		if(lastTouchPressedTime < 0f)
 		{
-			if (!CheckTouchPosition(Input.mousePosition))
-				return;
-
-			if (CheckTouchDistance(Input.mousePosition))
+			if (CheckTouchDistance(touchPosition, maxTouchesDistance))
 			{
 				if (lastTouchEndedTime > 0f)
 				{
 					if (Time.time - lastTouchEndedTime < maxTimeBetweenTouches)
-						OnDoubleTouch(CalcPlayerRotation(Input.mousePosition));
+						OnDoubleTouch();
 				}
 			}
 
-			lastTouchPosition = Input.mousePosition;
+			lastTouchPosition = touchPosition;
 			lastTouchPressedTime = Time.time;
 		}
-		else if (Input.GetMouseButtonUp(0))
+		else
 		{
-			if (CheckTouchDistance(Input.mousePosition))
+			if (CheckTouchDistance(touchPosition, maxTouchesDistance))
 			{
 				if (Time.time - lastTouchPressedTime < maxTouchPressedTime)
 					lastTouchEndedTime = Time.time;
 				else
 					lastTouchEndedTime = -1;
-
-				lastTouchPosition = Input.mousePosition;
 			}
+
+			lastTouchPosition = touchPosition;
+			lastTouchPressedTime = -1f;
 		}
-		#endregion
 
-		#region Mobile
-		if (Input.touchCount == 1)
-		{
-			Touch touch = Input.GetTouch(0);
-
-			if (!CheckTouchPosition(touch.position))
-				return;
-
-			switch (touch.phase)
-			{
-				case TouchPhase.Began:
-					if (CheckTouchDistance(touch.position))
-					{
-						if (lastTouchEndedTime > 0f)
-						{
-							if (Time.time - lastTouchEndedTime < maxTimeBetweenTouches)
-								OnDoubleTouch(CalcPlayerRotation(touch.position));
-						}
-					}
-
-					lastTouchPosition = touch.position;
-					lastTouchPressedTime = Time.time;
-					break;
-				case TouchPhase.Ended:
-					if (CheckTouchDistance(touch.position))
-					{
-						if (Time.time - lastTouchPressedTime < maxTouchPressedTime)
-							lastTouchEndedTime = Time.time;
-						else
-							lastTouchEndedTime = -1;
-
-						lastTouchPosition = touch.position;
-					}
-					break;
-			}
-		}
-		#endregion
+		return true;
 	}
 
 	Quaternion CalcPlayerRotation(Vector3 position)
@@ -117,19 +71,7 @@ public class DoubleTouchDetector : MonoBehaviour
 		return playerRotation;
 	}
 
-	bool CheckTouchPosition(Vector2 touchPosition)
-	{
-		Vector2 localPoint = Vector2.zero;
-		if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(background, touchPosition, null, out localPoint))
-			return false;
-
-		if (!background.rect.Contains(localPoint))
-			return false;
-
-		return true;
-	}
-
-	bool CheckTouchDistance(Vector2 touchPosition)
+	bool CheckTouchDistance(Vector2 touchPosition, float maxTouchesDistance)
 	{
 		return (touchPosition - lastTouchPosition).magnitude < maxTouchesDistance;
 	}
