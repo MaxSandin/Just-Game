@@ -26,7 +26,7 @@ public class DummyBehavior : MonoBehaviour, IMessageReceiver
 
         //TODO: set death animation
 
-        GameObject.Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     public void ApplyDamage(Damageable.DamageMessage msg)
