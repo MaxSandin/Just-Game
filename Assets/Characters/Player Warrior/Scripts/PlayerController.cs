@@ -9,8 +9,10 @@ public class PlayerController : MonoBehaviour
 
 	readonly int m_HashSpeed = Animator.StringToHash("Speed");
 	readonly int m_HashMoving = Animator.StringToHash("Moving");
-	readonly int m_HashHandAttack = Animator.StringToHash("Attack1Trigger");
-	readonly int m_HashFootAttack = Animator.StringToHash("Attack2Trigger");
+	readonly int m_HashAttack1 = Animator.StringToHash("Attack1Trigger");
+	readonly int m_HashAttack2 = Animator.StringToHash("Attack2Trigger");
+	readonly int m_HashSkill1 = Animator.StringToHash("Skill1Trigger");
+	readonly int m_HashSkill2 = Animator.StringToHash("Skill2Trigger");
 	readonly int m_HashRoolForward = Animator.StringToHash("RollForwardTrigger");
 	readonly int m_HashRoolBackward = Animator.StringToHash("RollBackwardTrigger");
 
@@ -110,25 +112,23 @@ public class PlayerController : MonoBehaviour
 		{
 			case SwipeDetector.SwipeDirection.Up:
 				{
-					if (!isRolling)
-						StartCoroutine(Roll(RollDirection.Forward));
+					animator.SetTrigger(m_HashSkill1);
 				}
 				break;
 			case SwipeDetector.SwipeDirection.Down:
 				{
-					if (!isRolling)
-						StartCoroutine(Roll(RollDirection.Backward));
+					animator.SetTrigger(m_HashSkill2);
 				}
 				break;
 			case SwipeDetector.SwipeDirection.Left:
 				{
-					animator.SetTrigger(m_HashFootAttack);
+					animator.SetTrigger(m_HashAttack1);
 					//StartCoroutine(COStunPause(attackDuration));
 				}
 				break;
 			case SwipeDetector.SwipeDirection.Right:
 				{
-					animator.SetTrigger(m_HashHandAttack);
+					animator.SetTrigger(m_HashAttack2);
 					//StartCoroutine(COStunPause(attackDuration));
 				}
 				break;
